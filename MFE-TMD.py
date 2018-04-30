@@ -1,36 +1,32 @@
 import numpy as np
-from numpy import pi
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from scipy import signal
 import sympy as sy
 
 def lti_to_sympy(lsys, symplify=True):
-    """ Convert Scipy's LTI instance to Sympy expression """
     s = sy.Symbol('s')
     G = sy.Poly(lsys.num, s) / sy.Poly(lsys.den, s)
     return sy.simplify(G) if symplify else G
 
-
 def sympy_to_lti(xpr, s=sy.Symbol('s')):
-    """ Convert Sympy transfer function polynomial to Scipy LTI """
-    num, den = sy.simplify(xpr).as_numer_denom()  # expressions
-    p_num_den = sy.poly(num, s), sy.poly(den, s)  # polynomials
-    c_num_den = [sy.expand(p).all_coeffs() for p in p_num_den]  # coefficients
-    l_num, l_den = [sy.lambdify((), c)() for c in c_num_den]  # convert to floats
+    num, den = sy.simplify(xpr).as_numer_denom()
+    p_num_den = sy.poly(num, s), sy.poly(den, s)
+    c_num_den = [sy.expand(p).all_coeffs() for p in p_num_den]
+    l_num, l_den = [sy.lambdify((), c)() for c in c_num_den]
     return signal.lti(l_num, l_den)
 
 mu = 0.02
 zeta_p = 0.02
-zeta_s = 0.07
-r_fs = 0.9657
-zeta_e = 0.0434
-r_fe = 0.9762
-u_k = 0.0047
+zeta_s = 0.01
+r_fs = 0.9650
+zeta_e = 0.1147
+r_fe = 0.9754
+u_k = 0.0358
 
 H6 = signal.lti([u_k*r_fs**2, 0, 0], [1, 2*zeta_e*r_fe, r_fe**2])
 
-H2_temp = signal.lti([1, (2*zeta_p+2*zeta_s*r_fs*mu)+(1+mu*r_fs**2), 0], [1])
+H2_temp = signal.lti([1, 2*zeta_p+2*zeta_s*r_fs*mu, 1+mu*r_fs**2], [1])
 H3_temp = signal.lti([-2*zeta_s*r_fs*mu, -mu*r_fs**2], [1])
 H4_temp = signal.lti([-2*zeta_s*r_fs, -r_fs**2], [1])
 H5_temp = signal.lti([1, 2*zeta_s*r_fs, r_fs**2], [1])
@@ -50,10 +46,11 @@ sTF = sy.simplify((1-sH5/sH3)/(sH2*sH5/sH3-sH4)).expand()
 
 TF = sympy_to_lti(sTF)
 
-w, mag, phase = signal.bode(TF)
+r_w, mag, phase = signal.bode(TF, np.arange(0.6, 1.4+1e-2, 1e-2))
 
 plt.figure()
-# plt.semilogx(w, mag)
-plt.plot(w, mag)
+plt.plot(r_w, mag)
 plt.xlim(0.6, 1.4)
+plt.ylim(0, 30)
+plt.grid()
 plt.show()

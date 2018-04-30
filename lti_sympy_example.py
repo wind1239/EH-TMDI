@@ -40,15 +40,10 @@ print("Multiplying Systems:")
 GHs = sy.simplify(Gs*Hs).expand()  # make sure polynomials are canceled and expanded
 display(sy.Eq(pGH, GHs))
 
-
-# print("Closing the loop:")
-# IGHs = sy.simplify(GHs / (1+GHs)).expand()
-# display(sy.Eq(pIGH, IGHs))
-
-# print("Back to LTI:")
-# lti_IGH = sympy_to_lti(IGHs)
-# print(lti_IGH)
+print("Closing the loop:")
+IGHs = sy.simplify(GHs / (1+GHs)).expand()
+display(sy.Eq(pIGH, IGHs))
 
 print("Back to LTI:")
-lti_GH = sympy_to_lti(GHs)
-print(lti_GH)
+lti_IGH = sympy_to_lti(IGHs)
+print(lti_IGH)

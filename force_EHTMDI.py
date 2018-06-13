@@ -13,7 +13,7 @@ beta = 0.1
 f_tmdi = 1/(1+mu+beta)
 zeta_tmdi = sqrt( (3*(mu+beta)) / (8*(1+mu+beta)) )
 
-ms = 1e4
+ms = 1.8e4
 ws = 2*pi*ws_hz
 cs = 2*ms*ws*zeta_s
 ks = ms*ws**2
@@ -28,7 +28,7 @@ k_tmdi = (mt+b)*w_tmdi**2
 t_end = 10
 time = np.linspace(0, t_end, t_end*1e3)
 
-f_wind = 1e3
+f_wind = 2e3
 
 Ri = 2.7
 Re = 3.3
